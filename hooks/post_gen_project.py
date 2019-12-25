@@ -13,9 +13,9 @@ def main():
 
 
 def clean_unused_template_settings():
-    selected_lang = '{{ cookiecutter.template_language }}'
+    selected_lang = 'mako'
     templates = os.path.join(
-        WORKING, 'pyratest', 'base_templates')
+        WORKING, 'pyratest', 'templates')
 
     if selected_lang == 'chameleon':
         extension = '.pt'

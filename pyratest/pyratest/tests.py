@@ -55,7 +55,7 @@ class TestMyViewSuccessCondition(BaseTest):
         from .views.default import my_view
         info = my_view(dummy_request(self.session))
         self.assertEqual(info['one'].name, 'one')
-        self.assertEqual(info['project'], '{{ cookiecutter.project_name }}')
+        self.assertEqual(info['project'], 'pyratest')
 
 
 class TestMyViewFailureCondition(BaseTest):
@@ -77,5 +77,5 @@ class ViewTests(unittest.TestCase):
         from .views.default import my_view
         request = testing.DummyRequest()
         info = my_view(request)
-        self.assertEqual(info['project'], '{{ cookiecutter.project_name }}')
+        self.assertEqual(info['project'], 'pyratest')
 

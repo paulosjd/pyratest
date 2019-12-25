@@ -31,7 +31,7 @@ tests_require = [
 setup(
     name='pyratest',
     version='0.0',
-    description='{{ cookiecutter.project_name }}',
+    description='pyratest',
     long_description=README + '\n\n' + CHANGES,
     classifiers=[
         'Programming Language :: Python',
