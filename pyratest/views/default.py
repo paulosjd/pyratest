@@ -3,38 +3,60 @@ from sqlalchemy import exc
 
 from .. import models
 
+template_path = '../templates/mytemplate.mako'
 
-@view_config(route_name='home', renderer='../templates/mytemplate.mako')
+
+@view_config(route_name='home', renderer=template_path)
 def my_view(request):
     query = request.dbsession.query(models.Account)
     one = query.filter(models.Account.name == 'Foobar Ltd').first()
-    return {'one': one, 'project': 'pyratest'}
+    return {'one': one}
 
 
 class OrderInfoView:
     def __init__(self, request):
         self.request = request
 
-    @view_config(route_name='order_info', renderer='../templates/mytemplate.mako')
+    @view_config(route_name='order_info', renderer=template_path)
     def get_order_info(self):
         try:
             order = self.request.dbsession.query(models.Order).filter(
                 models.Order.id == self.request.params.get('order_id')).one()
         except exc.SQLAlchemyError:
-            return {'status': 'order not found', 'project': 'pyratest'}
+            return {'status': 'order not found'}
 
         try:
             product_id = self.request.dbsession.query(models.Product.id).filter(
-                models.Product.product_number == self.request.params.get('product_number')).one()[0]
+                models.Product.number == self.request.params.get(
+                    'product_number')
+            ).one()[0]
         except exc.SQLAlchemyError:
-            return {'status': 'product not_found', 'project': 'pyratest'}
+            return {'status': f'product not found for order id {order.id}'}
 
         try:
             acc_name = self.request.dbsession.query(models.Account.name).filter(
-                models.Account.id == self.request.params.get('account_id')).one()[0]
+                models.Account.id == self.request.params.get('account_id')
+            ).one()[0]
         except exc.SQLAlchemyError:
-            return {'status': 'account not found', 'project': 'pyratest'}
+            return {'status': f'account not found for order id {order.id}'}
 
         return {
-            'order_number': order.number, 'product_id': product_id, 'account_name': acc_name, 'project': 'pyratest'
+            'status': 'ok',
+            'order_number': order.number,
+            'product_id': product_id,
+            'account_name': acc_name,
         }
+
+    @view_config(route_name='account_info', renderer=template_path)
+    def get_account_info(self):
+        account = self.request.dbsession.query(models.Account).filter(
+            models.Account.id == self.request.params.get('account_id')
+        ).first()
+        if not account:
+            try:
+                account = self.request.dbsession.query(models.Account).filter(
+                    models.Account.name == 'guest'
+                ).one()
+            except exc.SQLAlchemyError:
+                return {}
+        return {'account_name': account.name, 'account_number': account.number}
