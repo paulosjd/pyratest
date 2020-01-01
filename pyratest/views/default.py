@@ -60,3 +60,24 @@ class OrderInfoView:
             except exc.SQLAlchemyError:
                 return {}
         return {'account_name': account.name, 'account_number': account.number}
+
+    @view_config(route_name='account_orders', renderer=template_path)
+    def get_orders_for_account(self):
+        order_ids = self.request.dbsession.query(
+            models.Order.id, models.Order.reference
+        ).join(models.Account).filter(
+            models.Account.name == self.request.params.get('account_name')
+        ).all()
+        order_data = {
+            'orders': [f'{a.id} - {a.reference}' for a in order_ids]
+        }
+        if self.request.params.get('product_char'):
+            product_results = self.request.dbsession.query(
+                models.Product.id, models.Product.number
+            ).filter(models.Product.number.contains(self.request.params.get(
+                'product_char'))
+            ).all()
+            order_data.update({
+                'product_results': [f'{a[0]} - {a[1]}' for a in product_results]
+            })
+        return order_data

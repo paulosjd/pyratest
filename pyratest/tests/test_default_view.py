@@ -75,3 +75,30 @@ class OrderInfoViewTestCase(unittest.TestCase):
             raise_exc=exc.SQLAlchemyError
         )
         self.assertEqual({}, self.view.get_account_info())
+
+    def test_get_orders_for_account_with_product_char_falsey(self):
+        mock_orders = [MockModel(**{'id': ind, 'reference': ref})
+                       for ind, ref in enumerate(['ab', 'cd'])]
+        self.view.request.dbsession.return_value = MockQuery(
+            all_=mock_orders,
+        )
+        self.assertEqual({'orders': [f'{a[0]} - {a[1]}' for a in mock_orders]},
+                         self.view.get_orders_for_account())
+
+    def test_get_orders_for_account_with_product_char_truthy(self):
+        mock_orders = [MockModel(**{'id': ind, 'reference': ref})
+                       for ind, ref in enumerate(['ab', 'cd'])]
+        mock_products = [MockModel(**{'id': ind, 'number': num})
+                         for ind, num in enumerate(['123', '345'])]
+        self.view.request.dbsession.side_effect = [
+            MockQuery(all_=mock_orders),
+            MockQuery(all_=mock_products)
+        ]
+        self.view.request.params.update({'product_char': '2'})
+        self.assertEqual(
+            {'orders': [f'{a[0]} - {a[1]}' for a in mock_orders],
+             'products': [f'{a[0]} - {a[1]}' for a in mock_products]},
+            self.view.get_orders_for_account()
+        )
+
+
