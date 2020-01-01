@@ -7,6 +7,7 @@ import zope.sqlalchemy
 # Base.metadata prior to any initialization routines
 from .account import Account  # flake8: noqa
 from .order import Order  # flake8: noqa
+from .order_item import OrderItem  # flake8: noqa
 from .product import Product  # flake8: noqa
 
 # run configure_mappers after defining all of the models to ensure

@@ -1,6 +1,4 @@
-from sqlalchemy import (
-    Column, Index, Integer, Unicode,
-)
+from sqlalchemy import Column, Integer, Unicode
 
 from .meta import Base
 
