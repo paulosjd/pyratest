@@ -3,8 +3,8 @@ import unittest
 from pyrasatest import MockModel, MockQuery, MockRequest
 from sqlalchemy import exc
 
-from ..models import Account, Order, Product
-from ..views.default import OrderInfoView
+from pyratest.models import Account, Order, Product
+from pyratest.views.default import OrderInfoView
 
 
 class OrderInfoViewTestCase(unittest.TestCase):
@@ -97,8 +97,26 @@ class OrderInfoViewTestCase(unittest.TestCase):
         self.view.request.params.update({'product_char': '2'})
         self.assertEqual(
             {'orders': [f'{a[0]} - {a[1]}' for a in mock_orders],
-             'products': [f'{a[0]} - {a[1]}' for a in mock_products]},
+             'product_results': [f'{a[0]} - {a[1]}' for a in mock_products]},
             self.view.get_orders_for_account()
         )
+
+    def test_get_account_and_product_number(self):
+        acc_name = 'foo'
+        pn = '123'
+        self.view.request.dbsession.side_effect = [
+            MockQuery(one_=[acc_name]), MockQuery(one_=[pn])
+        ]
+        self.assertEqual({'account_name': acc_name, 'product_number': pn},
+                         self.view.get_account_and_product_number())
+
+    def test_get_account_and_product_number_lookup_fail(self):
+        acc_name = 'foo'
+        pn = '123'
+        self.view.request.dbsession.side_effect = [
+            MockQuery(one_=[acc_name]), MockQuery(raise_exc=exc.SQLAlchemyError)
+        ]
+        self.assertEqual({'account_name': acc_name, 'product_number': None},
+                         self.view.get_account_and_product_number())
 
 

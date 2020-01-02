@@ -1,9 +1,8 @@
-from datetime import datetime
 import unittest
+from datetime import datetime
 
 from pyramid.testing import DummyRequest
-from pyrasatest import MockModel, MockQuery, MockRequest
-from sqlalchemy import create_engine, exc
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 from pyratest.models import Account, Order, Product
@@ -41,8 +40,6 @@ class OrderInfoViewTestCase(unittest.TestCase):
                         if a.account_id == self.accounts[0].id]},
             self.view.get_orders_for_account()
         )
-        # SITUTATIONS WHERE WANT TO PART-MOCK E.G. TWO QUERIES - FIRST ONE (ABOVE)
-        # WANT TO RUN NORMALLY BUT THEN NEXT WANT TO USE MOCK QUERY FOR SELF.REQUEST.DBSESSION (OR VICE VERSA)
 
     def test_get_orders_for_account_with_product_char_truthy(self):
         self.view.request.params.update({
@@ -59,3 +56,18 @@ class OrderInfoViewTestCase(unittest.TestCase):
         self.assertEqual(expected_output,
                          self.view.get_orders_for_account())
 
+    def test_get_account_and_product_number(self):
+        self.view.request.params.update({
+            'account_id': self.accounts[0].id,
+            'product_id': self.products[0].id
+        })
+        acc_name = self.accounts[0].name
+        pn = self.products[0].number
+        self.assertEqual({'account_name': acc_name, 'product_number': pn},
+                         self.view.get_account_and_product_number())
+
+    def test_get_account_and_product_number_lookup_fail(self):
+        self.view.request.params = {'account_id': self.accounts[0].id}
+        acc_name = self.accounts[0].name
+        self.assertEqual({'account_name': acc_name, 'product_number': None},
+                         self.view.get_account_and_product_number())
