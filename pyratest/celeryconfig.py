@@ -1,3 +1,4 @@
+
 broker_url = 'amqp://127.0.0.1:5672'
 
 task_serializer = 'json'
