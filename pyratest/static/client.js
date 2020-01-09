@@ -14,7 +14,7 @@ client.on('notify', (result) => {
 document.querySelector('button').onclick = () => {
     const request = new XMLHttpRequest();
     // POST to h
-    request.open('POST', '/report3', true);
+    request.open('POST', '/notifier', true);
     request.setRequestHeader(
         'Content-Type',
         'application/x-www-form-urlencoded; charset=utf-8');

@@ -18,7 +18,7 @@ imports = ('pyratest.tasks.orders_report', 'pyratest.tasks.notifier_task')
 
 celery_routes = {
     'mytask1': {'queue': 'test_queue_name_for_task'},
-    'mytask2': {'queue': 'low_priority'},
+    'account_task': {'queue': 'low_priority'},
     'mytask3': {'queue': 'low_priority'},
     'notifier_task': {'queue': 'low_priority'}
 }

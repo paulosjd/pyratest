@@ -17,6 +17,7 @@ requires = [
     'alembic',
     'pyramid_retry',
     'pyramid_tm',
+    'requests',
     'Celery',
     'redis',
     'SQLAlchemy',
