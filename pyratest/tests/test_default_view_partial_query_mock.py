@@ -107,5 +107,3 @@ class OrderInfoViewTestCase(unittest.TestCase):
             {'account_name': acc_name, 'product_number': mock_product[0]},
             self.view.get_account_and_product_number()
         )
-
-    # TODO PartialMockDbSession involving exc.SQLAlchemy/

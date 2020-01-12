@@ -4,10 +4,8 @@ from celery.exceptions import TimeoutError
 from pyramid.response import Response
 from pyramid.view import view_config
 
-from pyratest.tasks.notifier import notifier_task
 from pyratest.tasks.accounts import account_task
-
-template_path = '../templates/mytemplate.mako'
+from pyratest.tasks.notifier import notifier_task
 
 
 @view_config(route_name='account_task',
