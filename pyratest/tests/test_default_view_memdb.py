@@ -62,12 +62,22 @@ class OrderInfoViewTestCase(unittest.TestCase):
             'product_id': self.products[0].id
         })
         acc_name = self.accounts[0].name
+        acc_num = self.accounts[0].number
         pn = self.products[0].number
-        self.assertEqual({'account_name': acc_name, 'product_number': pn},
-                         self.view.get_account_and_product_number())
+        self.assertEqual(
+            {'account_name': acc_name,
+             'account_number': acc_num,
+             'product_number': pn},
+            self.view.get_account_and_product_number()
+        )
 
     def test_get_account_and_product_number_lookup_fail(self):
         self.view.request.params = {'account_id': self.accounts[0].id}
         acc_name = self.accounts[0].name
-        self.assertEqual({'account_name': acc_name, 'product_number': None},
-                         self.view.get_account_and_product_number())
+        acc_num = self.accounts[0].number
+        self.assertEqual(
+            {'account_name': acc_name,
+             'account_number': acc_num,
+             'product_number': None},
+            self.view.get_account_and_product_number()
+        )

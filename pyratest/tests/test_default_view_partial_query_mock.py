@@ -23,6 +23,8 @@ class OrderInfoViewTestCase(unittest.TestCase):
         acc1 = Account(name='dep3', number='123')
         acc2 = Account(name='no2', number='124')
         cls.accounts = [acc1, acc2]
+        for acc in cls.accounts:
+            setattr(acc, 'acc_num', 5)
         cls.session.add_all(cls.accounts)
         cls.session.commit()
         ord1 = Order(reference='foo', account_id=acc1.id, date=datetime.now())
@@ -79,19 +81,27 @@ class OrderInfoViewTestCase(unittest.TestCase):
             'product_id': self.products[0].id
         })
         acc_name = self.accounts[0].name
+        acc_num = self.accounts[0].number
         pn = self.products[0].number
-        self.assertEqual({'account_name': acc_name, 'product_number': pn},
-                         self.view.get_account_and_product_number())
+        self.assertEqual(
+            {'account_name': acc_name,
+             'account_number': acc_num,
+             'product_number': pn},
+            self.view.get_account_and_product_number()
+        )
 
     def test_get_account_and_product_number_with_mocked_account_query(self):
         self.view.request.params = {'account_id': self.accounts[0].id}
-        mock_account = MockModel(name='foo')
+        acc_data = {'name': 'foo', 'acc_num': 45}
+        mock_account = MockModel(**acc_data)
         self.view.request.dbsession = PartialMockDbSession(
-            query_return_values={Account.name: mock_account},
+            query_return_values={Account.number.label('acc_num'): mock_account},
             dbsession=self.session
         )
         self.assertEqual(
-            {'account_name': mock_account[0], 'product_number': None},
+            {'account_name': acc_data['name'],
+             'account_number': acc_data['acc_num'],
+             'product_number': None},
             self.view.get_account_and_product_number()
         )
 
@@ -102,8 +112,9 @@ class OrderInfoViewTestCase(unittest.TestCase):
             query_return_values={Product.number: mock_product},
             dbsession=self.session
         )
-        acc_name = self.accounts[0].name
         self.assertEqual(
-            {'account_name': acc_name, 'product_number': mock_product[0]},
+            {'account_name': self.accounts[0].name,
+             'account_number': self.accounts[0].number,
+             'product_number': mock_product[0]},
             self.view.get_account_and_product_number()
         )

@@ -46,7 +46,7 @@ class OrderInfoViewTestCase(unittest.TestCase):
     def test_get_order_info(self):
         mock_order = MockModel(id=12, number=5)
         mock_product = MockModel(id=25)
-        mock_account = MockModel(name='test_acc')
+        mock_account = MockModel(name='acc345')
         query_return_values = {
             Order: mock_order,
             Product.id: mock_product,
@@ -102,21 +102,28 @@ class OrderInfoViewTestCase(unittest.TestCase):
         )
 
     def test_get_account_and_product_number(self):
-        acc_name = 'foo'
+        acc_name, acc_num = 'foo', '242'
         pn = '123'
         self.view.request.dbsession.side_effect = [
-            MockQuery(one_=[acc_name]), MockQuery(one_=[pn])
+            MockQuery(one_=MockModel(name=acc_name, acc_num=acc_num)),
+            MockQuery(one_=[pn])
         ]
-        self.assertEqual({'account_name': acc_name, 'product_number': pn},
-                         self.view.get_account_and_product_number())
+        self.assertEqual(
+            {'account_name': acc_name,
+             'account_number': acc_num,
+             'product_number': pn},
+            self.view.get_account_and_product_number()
+        )
 
     def test_get_account_and_product_number_lookup_fail(self):
-        acc_name = 'foo'
-        pn = '123'
+        acc_name, acc_num = 'foo', '242'
         self.view.request.dbsession.side_effect = [
-            MockQuery(one_=[acc_name]), MockQuery(raise_exc=exc.SQLAlchemyError)
+            MockQuery(one_=MockModel(name=acc_name, acc_num=acc_num)),
+            MockQuery(raise_exc=exc.SQLAlchemyError)
         ]
-        self.assertEqual({'account_name': acc_name, 'product_number': None},
-                         self.view.get_account_and_product_number())
-
-
+        self.assertEqual(
+            {'account_name': acc_name,
+             'account_number': acc_num,
+             'product_number': None},
+            self.view.get_account_and_product_number()
+        )

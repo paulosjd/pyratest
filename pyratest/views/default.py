@@ -84,10 +84,12 @@ class OrderInfoView:
 
     @view_config(route_name='acc_name_and_product', renderer=template_path)
     def get_account_and_product_number(self):
-        acc_name = self.request.dbsession.query(
-            models.Account.name).filter(
+        acc_fields = self.request.dbsession.query(
+            models.Account.number.label('acc_num'),
+            models.Account.name,
+        ).filter(
             models.Account.id == self.request.params.get('account_id')
-        ).one()[0]
+        ).one()
         try:
             pn = self.request.dbsession.query(models.Product.number).filter(
                 models.Product.id == self.request.params.get('product_id')
@@ -95,4 +97,8 @@ class OrderInfoView:
         except exc.SQLAlchemyError:
             pn = None
 
-        return {'account_name': acc_name, 'product_number': pn}
+        return {
+            'account_name': acc_fields.name,
+            'account_number': acc_fields.acc_num,
+            'product_number': pn,
+        }

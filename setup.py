@@ -33,7 +33,7 @@ tests_require = [
 
 setup(
     name='pyratest',
-    version='0.0',
+    version='1.3',
     description='pyratest',
     long_description=README + '\n\n' + CHANGES,
     classifiers=[
