@@ -1,4 +1,5 @@
 from sqlalchemy import Column, DateTime, Integer, Unicode, ForeignKey
+from sqlalchemy.orm import relation
 
 from .meta import Base
 
@@ -10,3 +11,4 @@ class Order(Base):
     reference = Column(Unicode(40), nullable=False, default='')
     account_id = Column(Integer, ForeignKey('accounts.id', ondelete='CASCADE'),
                         nullable=False)
+    order_items = relation('OrderItem', backref='order')

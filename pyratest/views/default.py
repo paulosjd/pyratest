@@ -1,7 +1,7 @@
 from pyramid.view import view_config
 from sqlalchemy import exc
 
-from .. import models
+from pyratest import models
 
 template_path = '../templates/mytemplate.mako'
 

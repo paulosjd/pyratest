@@ -3,7 +3,6 @@ from unittest.mock import patch
 
 from pyrasatest import MockModel, MockQuery, MockRequest
 
-from pyratest.models import Account, Order, Product
 from pyratest.tasks.accounts import account_task
 
 
